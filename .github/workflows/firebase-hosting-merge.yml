@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm install
       - run: npm run build
+      - run: npm run start
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
