@@ -62,4 +62,7 @@ export default {
     display: flex;
     flex-direction: column;
   }
+input {
+  background-color: $text;
+}
 </style>

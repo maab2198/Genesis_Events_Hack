@@ -1,43 +1,52 @@
 <template>
+  <div>
+    <p v-if="!events.length">No events</p>
+    <ul v-else class="events-list">
 
-  <p v-if="!events.length">No events</p>
-  <ul v-else class="events-list">
-
-    <li
-      v-for="event of events"
-      :key="event.id"
-      class="events-list__item"
-      @click="eventClickHandler(event.id)"
-    >
-      <div class="events-list__img">
-        <img 
-          src="@/assets/img/img-1.png"
-          alt="">
-      </div>
-      <div class="events-list__description">
-        <h3 class="events-list__title">
-          {{ event.title }}
-        </h3>
-        <p class="events-list__text">
-          {{ event.description.slice(0, 150) }}...
-        </p>
-        <div class="events-list__bottom">
-          <ul class="events-list__tags">
-            <li
-              v-for="tag of event.tag"
-              :key="tag"
-              class="events-list__tag"
-            >
-              {{ tag }}
-            </li>
-          </ul>
-          <div class="events-list__date">
-            {{ $dayjs(event.date).format('DD.MM.YYYY') }}
+      <li
+        v-for="event of historyList"
+        :key="event.id"
+        class="events-list__item"
+      >
+        <div class="events-list__img">
+          <img 
+            :src="event.img || require('@/assets/img/img-2.png')"
+            alt="">
+        </div>
+        <div class="events-list__description">
+          <h3 class="events-list__title">
+            {{ event.title }}
+          </h3>
+          <p class="events-list__text">
+            {{ event.description.slice(0, 150) }}...
+          </p>
+          <div class="events-list__bottom">
+            <ul class="events-list__tags">
+              <li
+                v-for="tag of event.tag"
+                :key="tag"
+                class="events-list__tag"
+              >
+                {{ tag }}
+              </li>
+            </ul>
+            <div class="events-list__date">
+              {{ $dayjs(event.date).format('DD.MM.YYYY') }}
+            </div>
           </div>
         </div>
-      </div>
-    </li>
-  </ul>
+      </li>
+    </ul>
+    <div class="pagination">
+      <v-pagination
+        @input="updatePage"
+        v-model="page"
+        :length="pagesCount"
+        prev-icon="mdi-menu-left"
+        next-icon="mdi-menu-right"
+      ></v-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -46,15 +55,48 @@ export default {
     events: {
       type: Array,
       required: true,
-    },
+    }
   },
-
-  data: () => ({}),
+  data: () => ({
+    page: 1,
+    pageSize: 2,
+    historyList: [],
+}),
+  computed: {
+    pagesData() {
+      return this.events
+    },
+    pagesCount() {
+      return this.pagesData.length > 2 ? this.pagesData.length / 2 : 1;
+    },
+    pages() {
+			if (this.pageSize == null || this.pagesCount == null) return 0;
+			return Math.ceil(this.pagesCount / this.pageSize);
+		}
+  },
+  created() {
+		this.initPage();
+		this.updatePage(this.page);
+	},
   methods: {
     eventClickHandler(eventId) {
       console.log(eventId);
       this.$router.push('event/' + eventId)
     },
+    initPage() {
+			this.pagesCount = this.pagesData.length;
+			if (this.pagesCount < this.pageSize) {
+				this.historyList = this.pagesData;
+			} else {
+				this.historyList = this.pagesData.slice(0, this.pageSize);
+			}
+		},
+		updatePage(pageIndex) {
+			const start = (pageIndex - 1) * this.pageSize;
+			const end = pageIndex * this.pageSize;
+			this.historyList = this.pagesData.slice(start, end);
+			this.page = pageIndex;
+		}
   },
 }
 </script>
