@@ -71,16 +71,29 @@
         margin: 0 auto;
       }
 
+
       &__field {
         display: flex;
         flex-direction: column;
         margin-bottom: 16px;
+        
+        &--checkbox{
+          display: flex;
+          flex-direction: row;
+        }
       }
 
       &__label {
         font-weight: bold;
         font-size: 20px;
         color: $tangerine;
+
+        &--tag {
+          display:flex;
+          align-items: center;
+          gap: 5px;
+
+        }
 
         @media (min-width: 768px) {
           font-size: 22px;
